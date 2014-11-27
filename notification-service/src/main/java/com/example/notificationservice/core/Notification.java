@@ -5,13 +5,19 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Entity
 @Table(name = "notifications")
@@ -21,18 +27,29 @@ import javax.persistence.TemporalType;
 		@NamedQuery(name = "com.example.notificationservice.core.Notification.findSinceDateOrderByTypeAndDate", 
 				query = "SELECT n "
 						+ "FROM Notification n "
-						+ "WHERE n.user = :user AND n.eventTimestamp > :from "
-						+ "ORDER BY n.eventType, n.eventTimestamp DESC")
+						+ "WHERE n.user = :user AND n.eventTimestamp > :since "
+						+ "ORDER BY n.eventType, n.eventTimestamp DESC"),
+		@NamedQuery(name = "com.example.notificationservice.core.Notification.findAll", 
+				query = "SELECT n FROM Notification n ")
 })
+@JsonInclude(Include.NON_NULL)
 public class Notification {
 
+	
 	@Id
+	@GeneratedValue
+	@JsonIgnore
+	private Long id;
+	
+	@Column(unique=true, nullable = false, updatable = false)
 	private String guid;
 	
 	@Column(nullable = false, updatable = false)
 	private String deviceGuid;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "user", referencedColumnName = "id")
 	private User user;
 	
 	@Column(nullable = false, updatable = false)
@@ -48,13 +65,13 @@ public class Notification {
 	private String content;
 	
 	@Column(nullable = true)
-	private double geofenceLat;
+	private Double geofenceLat;
 
 	@Column(nullable = true)
-	private double geofenceLon;
+	private Double geofenceLon;
 	
 	@Column(nullable = true)
-	private long geofenceRadiusMetres;
+	private Long geofenceRadiusMetres;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date eventTimestamp;
@@ -63,15 +80,25 @@ public class Notification {
 	private Date sentTimestamp;
 	
 	@Column
-	private boolean read = false;
+	private Boolean read = false;
 	
 		
 	
-	public boolean isRead() {
+	
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Boolean getRead() {
 		return read;
 	}
 
-	public void setRead(boolean read) {
+	public void setRead(Boolean read) {
 		this.read = read;
 	}
 
@@ -91,27 +118,29 @@ public class Notification {
 		this.content = content;
 	}
 
-	public double getGeofenceLat() {
+	
+	
+	public Double getGeofenceLat() {
 		return geofenceLat;
 	}
 
-	public void setGeofenceLat(double geofenceLat) {
+	public void setGeofenceLat(Double geofenceLat) {
 		this.geofenceLat = geofenceLat;
 	}
 
-	public double getGeofenceLon() {
+	public Double getGeofenceLon() {
 		return geofenceLon;
 	}
 
-	public void setGeofenceLon(double geofenceLon) {
+	public void setGeofenceLon(Double geofenceLon) {
 		this.geofenceLon = geofenceLon;
 	}
 
-	public long getGeofenceRadiusMetres() {
+	public Long getGeofenceRadiusMetres() {
 		return geofenceRadiusMetres;
 	}
 
-	public void setGeofenceRadiusMetres(long geofenceRadiusMetres) {
+	public void setGeofenceRadiusMetres(Long geofenceRadiusMetres) {
 		this.geofenceRadiusMetres = geofenceRadiusMetres;
 	}
 
@@ -175,7 +204,7 @@ public class Notification {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((guid == null) ? 0 : guid.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -188,14 +217,15 @@ public class Notification {
 		if (getClass() != obj.getClass())
 			return false;
 		Notification other = (Notification) obj;
-		if (guid == null) {
-			if (other.guid != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!guid.equals(other.guid))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
-	
+
+		
 	
 	
 }

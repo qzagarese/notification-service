@@ -38,6 +38,7 @@ public class NotificationServiceApplication extends
 
 	@Override
 	public void initialize(Bootstrap<NotificationServiceConfiguration> bootstrap) {
+		bootstrap.addBundle(hibernateBundle);
 		bootstrap
 				.addBundle(new MigrationsBundle<NotificationServiceConfiguration>() {
 					@Override
@@ -46,7 +47,6 @@ public class NotificationServiceApplication extends
 						return configuration.getDataSourceFactory();
 					}
 				});
-		bootstrap.addBundle(hibernateBundle);
 	}
 
 	@Override

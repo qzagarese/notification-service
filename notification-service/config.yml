@@ -5,6 +5,9 @@ database:
   # the name of your JDBC driver
   driverClass: org.h2.Driver
 
+  properties:
+    hibernate.hbm2ddl.auto: update
+
   # the username
   user: sa
 

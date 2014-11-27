@@ -24,6 +24,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.example.notificationservice.core.Notification;
 import com.example.notificationservice.core.User;
 import com.example.notificationservice.db.NotificationDAO;
+import com.google.common.base.Optional;
 
 @Path("/notifications")
 @Produces(MediaType.APPLICATION_JSON)
@@ -37,6 +38,7 @@ public class NotificationResource {
 
 	@Path("/{guid}")
 	@PATCH
+	@UnitOfWork
 	public Response read(@Auth User user, @PathParam("guid") String guid) {
 		Notification notification = fetchAndSetRead(guid, user, true);
 		return (notification == null) ? Response.status(Status.NOT_FOUND)
@@ -48,13 +50,15 @@ public class NotificationResource {
 	@Timed
 	@UnitOfWork
 	public Map<String, List<Notification>> list(@Auth User user,
-			@QueryParam("from") Date from) {
+			@QueryParam("since") Optional<Long> since) {
 		Map<String, List<Notification>> result = new HashMap<String, List<Notification>>();
-		List<Notification> searchResult = dao.findSinceDateOrderByTypeAndDate(user, from);
-		if(searchResult != null){
+		List<Notification> searchResult = dao.findSinceDateOrderByTypeAndDate(
+				user, new Date(since.or(System.currentTimeMillis() - 3600 * 24)));
+		if (searchResult != null) {
 			for (Notification notification : searchResult) {
-				List<Notification> list = result.get(notification.getEventType());
-				if(list == null){
+				List<Notification> list = result.get(notification
+						.getEventType());
+				if (list == null) {
 					list = new ArrayList<Notification>();
 				}
 				list.add(notification);
@@ -66,6 +70,7 @@ public class NotificationResource {
 
 	@Path("/{guid}/read")
 	@PATCH
+	@UnitOfWork
 	public Response markRead(@Auth User user, @PathParam("guid") String guid) {
 		Notification notification = fetchAndSetRead(guid, user, true);
 		return (notification == null) ? Response.status(Status.NOT_MODIFIED)
@@ -74,6 +79,7 @@ public class NotificationResource {
 
 	@Path("/{guid}/unread")
 	@PATCH
+	@UnitOfWork
 	public Response markUnread(@Auth User user, @PathParam("guid") String guid) {
 		Notification notification = fetchAndSetRead(guid, user, true);
 		return (notification == null) ? Response.status(Status.NOT_MODIFIED)
@@ -82,6 +88,7 @@ public class NotificationResource {
 
 	@Path("/{guid}")
 	@DELETE
+	@UnitOfWork
 	public Response delete(@Auth User user, @PathParam("guid") String guid) {
 		Notification notification = dao.findOneIfUserMatches(guid, user);
 		return (notification == null) ? Response.status(Status.NOT_FOUND)

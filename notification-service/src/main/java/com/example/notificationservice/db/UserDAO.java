@@ -2,6 +2,8 @@ package com.example.notificationservice.db;
 
 import io.dropwizard.hibernate.AbstractDAO;
 
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 
 import com.example.notificationservice.core.User;
@@ -20,4 +22,7 @@ public class UserDAO extends AbstractDAO<User> {
 		return result;
 	}
 
+	public List<User> findAll(){
+		return list(namedQuery("com.example.notificationservice.core.User.findAll"));	
+	}
 }

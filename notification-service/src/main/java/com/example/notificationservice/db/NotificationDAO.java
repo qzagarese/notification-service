@@ -35,11 +35,13 @@ public class NotificationDAO extends AbstractDAO<Notification> {
 				.setString("guid", guid).setEntity("user", user).uniqueResult();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Notification> findSinceDateOrderByTypeAndDate(User user,
 			Date date) {
-		return namedQuery(
-				"com.example.notificationservice.core.Notification.findSinceDateOrderByTypeAndDate")
-				.setDate("from", date).setEntity("user", user).list();
+		return list(namedQuery("com.example.notificationservice.core.Notification.findSinceDateOrderByTypeAndDate")
+				.setEntity("user", user).setTimestamp("since", date));
+	}
+	
+	public List<Notification> findAll(){
+		return list(namedQuery("com.example.notificationservice.core.Notification.findAll"));
 	}
 }
