@@ -97,8 +97,11 @@ Returns a specific notification and sets it as read
 #####Request Example
 
 `PATCH /notifications/cbe01d4d-43fb-4bee-a43e-9421f5b34f41 HTTP/1.1`
+
 `Host: localhost:8443`
+
 `Authorization: Basic U2FtOmJheg==`
+
 `Cache-Control: no-cache`
 
 #####Body
@@ -137,8 +140,11 @@ Sets the specified notification as read
 #####Request Example
 
 `PATCH /notifications/cbe01d4d-43fb-4bee-a43e-9421f5b34f41/read HTTP/1.1`
+
 `Host: localhost:8443`
+
 `Authorization: Basic U2FtOmJheg==`
+
 `Cache-Control: no-cache`
 
 #####Body
@@ -161,8 +167,11 @@ Sets the specified notification as read
 #####Request Example
 
 `PATCH /notifications/cbe01d4d-43fb-4bee-a43e-9421f5b34f41/unread HTTP/1.1`
+
 `Host: localhost:8443`
+
 `Authorization: Basic U2FtOmJheg==`
+
 `Cache-Control: no-cache`
 
 #####Body
@@ -184,8 +193,11 @@ Deletes the specified notification
 #####Request Example
 
 `DELETE /notifications/cbe01d4d-43fb-4bee-a43e-9421f5b34f41 HTTP/1.1`
+
 `Host: localhost:8443`
+
 `Authorization: Basic U2FtOmJheg==`
+
 `Cache-Control: no-cache`
 
 #####Body
