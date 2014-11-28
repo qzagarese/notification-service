@@ -16,25 +16,23 @@ Gets the latest notifications for the requesting user from "since" on.
 If "since" is not specified, it returns the latest notifications from last 24 hours.  
 Items are grouped by eventType and each group is ordered by eventTimestamp desc.
  
-`GET /notifications/latest?since={since}`
+`GET /notifications/latest?since={since}&until={until}`
 
 #####Parameters
-* since: unix timestamp. Defaults to `NOW - 24hours`
+* since: unix timestamp. The instant to start from (included). Defaults to `NOW - 24hours`
+* until: unix timestamp. The instant to stop (excluded). Defaults to `NOW`
 
 
 #####Request Example
 This request returns all the notifications for the provided credentials
 
-`GET /notifications/latest?since=0 HTTP/1.1`
+`GET /notifications/latest?since=0&until=10000000000000 HTTP/1.1`
 
 `Host: localhost:8443`
 
 `Authorization: Basic U2FtOmJheg==`
 
 `Cache-Control: no-cache`
-
-#####Body
-empty
 
 #####Returns
 * A list of notifications grouped by type. Each group is ordered by eventTimestamp from latest to oldest 
@@ -46,42 +44,66 @@ empty
 ```javascript
 
 	{
-	"CAP_TRESHOLD_REACHED": [
-	        {
-	            "guid": "ba54a7e4-6211-4921-8c4d-7fb522f9046d",
-	            "deviceGuid": "dcd7f334-6625-4552-b32f-78afaf545949",
-	            "eventType": "CAP_TRESHOLD_REACHED",
-	            "title": "Data cap threshold",
-	            "content": "8MB Remaining until 10/2/2014",
-	            "eventTimestamp": 1390439640000,
-	            "sentTimestamp": 1390439670000,
-	            "read": false
-	        }
-	    ],
-	    "SITE_BLOCKED": [
-	        {
-	            "guid": "fb97d0fd-e043-4d78-9093-165e2e36d3f4",
-	            "deviceGuid": "dcd7f334-6625-4552-b32f-78afaf545949",
-	            "eventType": "SITE_BLOCKED",
-	            "eventSubtype": "FACEBOOK_APP",
-	            "title": "Site/App block",
-	            "content": "Facebook App",
-	            "eventTimestamp": 1390476120000,
-	            "sentTimestamp": 1390476180000,
-	            "read": false
-	        },
-	        {
-	            "guid": "621251b8-2e33-4370-8ff4-5cdc785d7430",
-	            "deviceGuid": "dcd7f334-6625-4552-b32f-78afaf545949",
-	            "eventType": "SITE_BLOCKED",
-	            "eventSubtype": "CNN_COM",
-	            "title": "Site/App block",
-	            "content": "www.cnn.com",
-	            "eventTimestamp": 1390471200000,
-	            "sentTimestamp": 1390471230000,
-	            "read": false
-	        }
-		]
+    "content": {
+        "CAP_TRESHOLD_REACHED": {
+            "content": [
+                {
+                    "guid": "ba54a7e4-6211-4921-8c4d-7fb522f9046d",
+                    "deviceGuid": "dcd7f334-6625-4552-b32f-78afaf545949",
+                    "eventType": "CAP_TRESHOLD_REACHED",
+                    "title": "Data cap threshold",
+                    "content": "8MB Remaining until 10/2/2014",
+                    "eventTimestamp": 1390439640000,
+                    "sentTimestamp": 1390439670000,
+                    "read": true
+                }
+            ],
+            "items": 1,
+            "total": 1,
+            "unread": 0
+        },
+        "SITE_BLOCKED": {
+            "content": [
+                {
+                    "guid": "fb97d0fd-e043-4d78-9093-165e2e36d3f4",
+                    "deviceGuid": "dcd7f334-6625-4552-b32f-78afaf545949",
+                    "eventType": "SITE_BLOCKED",
+                    "eventSubtype": "FACEBOOK_APP",
+                    "title": "Site/App block",
+                    "content": "Facebook App",
+                    "eventTimestamp": 1390476120000,
+                    "sentTimestamp": 1390476180000,
+                    "read": true
+                },
+                {
+                    "guid": "0ec61cee-23c3-402d-aac3-d98cc18701f3",
+                    "deviceGuid": "879c4f18-4c6e-462d-afa4-1866c0e38b18",
+                    "eventType": "SITE_BLOCKED",
+                    "eventSubtype": "CNN_COM",
+                    "title": "Site/App block",
+                    "content": "www.cnn.co.uk",
+                    "eventTimestamp": 1390458840000,
+                    "sentTimestamp": 1390458870000,
+                    "read": false
+                },
+                {
+                    "guid": "aa926c4c-b120-4178-b105-7c25b94cc916",
+                    "deviceGuid": "879c4f18-4c6e-462d-afa4-1866c0e38b18",
+                    "eventType": "SITE_BLOCKED",
+                    "title": "Security block",
+                    "content": "www.badsite.com",
+                    "eventTimestamp": 1390448040000,
+                    "sentTimestamp": 1390448070000,
+                    "read": false
+                }
+            ],
+            "items": 3,
+            "total": 3,
+            "unread": 2
+        }
+	    "items": 4,
+	    "total": 4,
+	    "unread": 2	
 	}
 ```   
 
@@ -103,9 +125,6 @@ Returns a specific notification and sets it as read
 `Authorization: Basic U2FtOmJheg==`
 
 `Cache-Control: no-cache`
-
-#####Body
-empty
 
 #####Returns
 * The requested notification 
@@ -147,8 +166,6 @@ Sets the specified notification as read
 
 `Cache-Control: no-cache`
 
-#####Body
-empty
 
 #####Returns
 * type : void
@@ -174,8 +191,6 @@ Sets the specified notification as read
 
 `Cache-Control: no-cache`
 
-#####Body
-empty
 
 #####Returns
 * type : void

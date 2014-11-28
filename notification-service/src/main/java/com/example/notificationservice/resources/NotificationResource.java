@@ -5,8 +5,6 @@ import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.PATCH;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,6 +18,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.codahale.metrics.annotation.Timed;
 import com.example.notificationservice.core.Notification;
+import com.example.notificationservice.core.SearchResult;
 import com.example.notificationservice.core.User;
 import com.example.notificationservice.db.NotificationDAO;
 import com.google.common.base.Optional;
@@ -48,13 +47,15 @@ public class NotificationResource {
 	@GET
 	@Timed
 	@UnitOfWork
-	public Map<String, List<Notification>> list(@Auth User user,
-			@QueryParam("since") Optional<Long> since) {
-		Map<String, List<Notification>> searchResult = dao
+	public SearchResult<Notification> list(@Auth User user,
+			@QueryParam("since") Optional<Long> since, @QueryParam("until") Optional<Long> until) {
+		Date sinceDate = new Date(
+						since.or(System.currentTimeMillis() - 3600000 * 24));
+		Date untilDate = new Date(until.or(System.currentTimeMillis()));
+		SearchResult<Notification> searchResult = dao
 				.findSinceDateOrderByDateGroupByType(
 						user,
-						new Date(
-								since.or(System.currentTimeMillis() - 3600000 * 24)));
+						sinceDate, untilDate);
 		return searchResult;
 	}
 

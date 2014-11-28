@@ -22,11 +22,18 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @Table(name = "notifications")
 @NamedQueries({
 		@NamedQuery(name = "com.example.notificationservice.core.Notification.findOneIfUserMatches", query = "SELECT n FROM Notification n WHERE n.guid = :guid AND n.user = :user"),
-		@NamedQuery(name = "com.example.notificationservice.core.Notification.findSinceDateOrderByTypeAndDate", query = "SELECT n "
+		@NamedQuery(name = "com.example.notificationservice.core.Notification.findByDateOrderByDate", query = "SELECT n "
 				+ "FROM Notification n "
 				+ "WHERE n.user = :user AND n.eventTimestamp >= :since "
+				+ "		AND n.eventTimestamp < :until "
 				+ "ORDER BY n.eventTimestamp DESC"),
-		@NamedQuery(name = "com.example.notificationservice.core.Notification.findAll", query = "SELECT n FROM Notification n ") })
+		@NamedQuery(name = "com.example.notificationservice.core.Notification.findAll", query = "SELECT n FROM Notification n "),
+		@NamedQuery(name = "com.example.notificationservice.core.Notification.countByUserGroupByEventType",
+				query = "SELECT n.eventType, count(n) FROM Notification n WHERE n.user = :user GROUP BY n.eventType"),
+		@NamedQuery(name = "com.example.notificationservice.core.Notification.countUnreadByUserGroupByEventType",
+				query = "SELECT n.eventType, count(n) FROM Notification n WHERE n.user = :user AND n.read = false GROUP BY n.eventType")		
+		
+})
 @JsonInclude(Include.NON_NULL)
 public class Notification {
 
