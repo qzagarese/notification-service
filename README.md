@@ -26,7 +26,7 @@ Items are grouped by eventType and each group is ordered by eventTimestamp desc.
 #####Request Example
 This request returns all the notifications for the provided credentials
 
-`GET /notifications/latest?since=0&until=10000000000000 HTTP/1.1`
+`GET /notifications/latest?since=0 HTTP/1.1`
 
 `Host: localhost:8443`
 
