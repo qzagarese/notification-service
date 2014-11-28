@@ -5,7 +5,6 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,77 +21,55 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @Entity
 @Table(name = "notifications")
 @NamedQueries({
-		@NamedQuery(name = "com.example.notificationservice.core.Notification.findOneIfUserMatches", 
-				query = "SELECT n FROM Notification n WHERE n.guid = :guid AND n.user = :user"),
-		@NamedQuery(name = "com.example.notificationservice.core.Notification.findSinceDateOrderByTypeAndDate", 
-				query = "SELECT n "
-						+ "FROM Notification n "
-						+ "WHERE n.user = :user AND n.eventTimestamp > :since "
-						+ "ORDER BY n.eventType, n.eventTimestamp DESC"),
-		@NamedQuery(name = "com.example.notificationservice.core.Notification.findAll", 
-				query = "SELECT n FROM Notification n ")
-})
+		@NamedQuery(name = "com.example.notificationservice.core.Notification.findOneIfUserMatches", query = "SELECT n FROM Notification n WHERE n.guid = :guid AND n.user = :user"),
+		@NamedQuery(name = "com.example.notificationservice.core.Notification.findSinceDateOrderByTypeAndDate", query = "SELECT n "
+				+ "FROM Notification n "
+				+ "WHERE n.user = :user AND n.eventTimestamp > :since "
+				+ "ORDER BY n.eventType, n.eventTimestamp DESC"),
+		@NamedQuery(name = "com.example.notificationservice.core.Notification.findAll", query = "SELECT n FROM Notification n ") })
 @JsonInclude(Include.NON_NULL)
 public class Notification {
 
-	
 	@Id
-	@GeneratedValue
-	@JsonIgnore
-	private Long id;
-	
-	@Column(unique=true, nullable = false, updatable = false)
 	private String guid;
-	
+
 	@Column(nullable = false, updatable = false)
 	private String deviceGuid;
-	
+
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "user", referencedColumnName = "id")
+	@JoinColumn(name = "user", referencedColumnName = "guid")
 	private User user;
-	
+
 	@Column(nullable = false, updatable = false)
 	private String eventType;
-	
+
 	@Column(updatable = false)
 	private String eventSubtype;
 
 	@Column(nullable = false)
 	private String title;
-	
+
 	@Column(nullable = false)
 	private String content;
-	
+
 	@Column(nullable = true)
 	private Double geofenceLat;
 
 	@Column(nullable = true)
 	private Double geofenceLon;
-	
+
 	@Column(nullable = true)
 	private Long geofenceRadiusMetres;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date eventTimestamp;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date sentTimestamp;
-	
+
 	@Column
 	private Boolean read = false;
-	
-		
-	
-	
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public Boolean getRead() {
 		return read;
@@ -118,8 +95,6 @@ public class Notification {
 		this.content = content;
 	}
 
-	
-	
 	public Double getGeofenceLat() {
 		return geofenceLat;
 	}
@@ -204,7 +179,7 @@ public class Notification {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((guid == null) ? 0 : guid.hashCode());
 		return result;
 	}
 
@@ -217,15 +192,12 @@ public class Notification {
 		if (getClass() != obj.getClass())
 			return false;
 		Notification other = (Notification) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (guid == null) {
+			if (other.guid != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!guid.equals(other.guid))
 			return false;
 		return true;
 	}
 
-		
-	
-	
 }

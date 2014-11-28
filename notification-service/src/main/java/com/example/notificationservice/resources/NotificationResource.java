@@ -38,6 +38,7 @@ public class NotificationResource {
 
 	@Path("/{guid}")
 	@PATCH
+	@Timed
 	@UnitOfWork
 	public Response read(@Auth User user, @PathParam("guid") String guid) {
 		Notification notification = fetchAndSetRead(guid, user, true);
@@ -70,6 +71,7 @@ public class NotificationResource {
 
 	@Path("/{guid}/read")
 	@PATCH
+	@Timed
 	@UnitOfWork
 	public Response markRead(@Auth User user, @PathParam("guid") String guid) {
 		Notification notification = fetchAndSetRead(guid, user, true);
@@ -79,15 +81,17 @@ public class NotificationResource {
 
 	@Path("/{guid}/unread")
 	@PATCH
+	@Timed
 	@UnitOfWork
 	public Response markUnread(@Auth User user, @PathParam("guid") String guid) {
-		Notification notification = fetchAndSetRead(guid, user, true);
+		Notification notification = fetchAndSetRead(guid, user, false);
 		return (notification == null) ? Response.status(Status.NOT_MODIFIED)
 				.build() : Response.ok().build();
 	}
 
 	@Path("/{guid}")
 	@DELETE
+	@Timed
 	@UnitOfWork
 	public Response delete(@Auth User user, @PathParam("guid") String guid) {
 		Notification notification = dao.findOneIfUserMatches(guid, user);

@@ -13,16 +13,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "users")
 @NamedQueries({
-		@NamedQuery(name = "com.example.notificationservice.core.User.findByUsername", 
-				query = "SELECT u FROM User u WHERE u.username = :username"),
-		@NamedQuery(name = "com.example.notificationservice.core.User.findAll", 
-		query = "SELECT u FROM User u") })
+		@NamedQuery(name = "com.example.notificationservice.core.User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
+		@NamedQuery(name = "com.example.notificationservice.core.User.findAll", query = "SELECT u FROM User u") })
 public class User {
 
 	@Id
-	private Long id;
-	
-	@Column(nullable = false, updatable = false, unique = true)
 	private String guid;
 
 	@Column(nullable = false, updatable = false, unique = true)
@@ -34,15 +29,6 @@ public class User {
 	@OneToMany(mappedBy = "user")
 	private List<Notification> notifications;
 
-	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
 	public String getGuid() {
 		return guid;
 	}
@@ -79,7 +65,7 @@ public class User {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((guid == null) ? 0 : guid.hashCode());
 		return result;
 	}
 
@@ -92,14 +78,12 @@ public class User {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (guid == null) {
+			if (other.guid != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!guid.equals(other.guid))
 			return false;
 		return true;
 	}
-
-	
 
 }

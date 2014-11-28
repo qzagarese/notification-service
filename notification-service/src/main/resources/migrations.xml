@@ -9,11 +9,8 @@
 
 		<!-- Create users table -->
 		<createTable tableName="users">
-			<column name="id" type="bigint">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
 			<column name="guid" type="varchar(255)">
-				<constraints unique="true" nullable="false" />
+				<constraints primaryKey="true" />
 			</column>
 			<column name="username" type="varchar(255)">
 				<constraints nullable="false" unique="true" />
@@ -25,17 +22,15 @@
 
 		<!-- Create notifications table -->
 		<createTable tableName="notifications">
-			<column name="id" type="bigint" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
+
 			<column name="guid" type="varchar(255)">
-				<constraints unique="true" nullable="false" />
+				<constraints primaryKey="true" />
 			</column>
 			<column name="deviceGuid" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="user" type="bigint">
-				<constraints references="users(id)" foreignKeyName="userId"
+			<column name="user" type="varchar(255)">
+				<constraints references="users(guid)" foreignKeyName="userGuid"
 					nullable="false" />
 			</column>
 			<column name="eventType" type="varchar(255)">
@@ -63,25 +58,21 @@
 
 		<!-- Insert some users -->
 		<insert tableName="users">
-			<column name="id" value="1"></column>
 			<column name="guid" value="99c6ac34-b017-4391-9ea7-c64d07263237"></column>
 			<column name="username" value="Bob"></column>
 			<column name="pass" value="foo"></column>
 		</insert>
 		<insert tableName="users">
-			<column name="id" value="2"></column>
 			<column name="guid" value="286416b4-7eac-433c-876c-339dfd8bcd68"></column>
 			<column name="username" value="Alice"></column>
 			<column name="pass" value="bar"></column>
 		</insert>
 		<insert tableName="users">
-			<column name="id" value="3"></column>
 			<column name="guid" value="315c0c1e-8c4c-458f-a37c-9b636d1fb80f"></column>
 			<column name="username" value="Sam"></column>
 			<column name="pass" value="baz"></column>
 		</insert>
 		<insert tableName="users">
-			<column name="id" value="4"></column>
 			<column name="guid" value="79bcb260-7f75-49cf-b76d-41e1c2609055"></column>
 			<column name="username" value="Tom"></column>
 			<column name="pass" value="lol"></column>
@@ -91,19 +82,20 @@
 		<insert tableName="notifications">
 			<column name="guid" value="532a20d3-aef0-4554-9bc1-9561dbd6151c"></column>
 			<column name="deviceGuid" value="f897e6a4-4fb8-41ce-a07d-080da859bbf9"></column>
-			<column name="user" value="1"></column>
+			<column name="user" value="99c6ac34-b017-4391-9ea7-c64d07263237"></column>
 			<column name="eventType" value="APP_INACTIVE"></column>
 			<column name="title" value="App Inactive"></column>
 			<column name="content" value="iPhone 4 app inactive since 6/1/2014"></column>
 			<column name="eventTimestamp" value="2014-01-23 10:07:00"></column>
 			<column name="sentTimestamp" value="2014-01-23 07:34:30"></column>
+			<column name="read" valueBoolean="false"></column>
 		</insert>
 
 
 		<insert tableName="notifications">
 			<column name="guid" value="cad4a703-723b-49a3-aa0d-80efc82035a8"></column>
 			<column name="deviceGuid" value="48f31433-0fd0-433c-ba93-ee1080cb0e09"></column>
-			<column name="user" value="2"></column>
+			<column name="user" value="286416b4-7eac-433c-876c-339dfd8bcd68"></column>
 			<column name="eventType" value="SITE_BLOCKED"></column>
 			<column name="eventSubtype" value="YOUTUBE"></column>
 			<column name="title" value="Site/App block"></column>
@@ -116,7 +108,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="2affbe87-fd11-4e38-997c-7adf3dc6a9e6"></column>
 			<column name="deviceGuid" value="48f31433-0fd0-433c-ba93-ee1080cb0e09"></column>
-			<column name="user" value="2"></column>
+			<column name="user" value="286416b4-7eac-433c-876c-339dfd8bcd68"></column>
 			<column name="eventType" value="SITE_BLOCKED"></column>
 			<column name="eventSubtype" value="ADULT"></column>
 			<column name="title" value="Site/App block"></column>
@@ -129,7 +121,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="4c10de92-0bb5-4d85-b09d-2020938bf693"></column>
 			<column name="deviceGuid" value="48f31433-0fd0-433c-ba93-ee1080cb0e09"></column>
-			<column name="user" value="2"></column>
+			<column name="user" value="286416b4-7eac-433c-876c-339dfd8bcd68"></column>
 			<column name="eventType" value="SITE_BLOCKED"></column>
 			<column name="eventSubtype" value="YOUTUBE"></column>
 			<column name="title" value="Site/App block"></column>
@@ -142,7 +134,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="8d7549df-8f8a-4a34-aa0d-1949f89584a7"></column>
 			<column name="deviceGuid" value="48f31433-0fd0-433c-ba93-ee1080cb0e09"></column>
-			<column name="user" value="2"></column>
+			<column name="user" value="286416b4-7eac-433c-876c-339dfd8bcd68"></column>
 			<column name="eventType" value="SITE_BLOCKED"></column>
 			<column name="title" value="Security block"></column>
 			<column name="content" value="Malware detected"></column>
@@ -154,7 +146,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="275527c6-393a-4161-b2b7-a6d191eab721"></column>
 			<column name="deviceGuid" value="dcd7f334-6625-4552-b32f-78afaf545949"></column>
-			<column name="user" value="3"></column>
+			<column name="user" value="315c0c1e-8c4c-458f-a37c-9b636d1fb80f"></column>
 			<column name="eventType" value="SITE_BLOCKED"></column>
 			<column name="eventSubtype" value="FACEBOOK_APP"></column>
 			<column name="title" value="Site/App block"></column>
@@ -167,7 +159,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="84e42ea6-3928-4712-91e4-d64adff53215"></column>
 			<column name="deviceGuid" value="dcd7f334-6625-4552-b32f-78afaf545949"></column>
-			<column name="user" value="3"></column>
+			<column name="user" value="315c0c1e-8c4c-458f-a37c-9b636d1fb80f"></column>
 			<column name="eventType" value="SITE_BLOCKED"></column>
 			<column name="eventSubtype" value="FACEBOOK_APP"></column>
 			<column name="title" value="Site/App block"></column>
@@ -180,7 +172,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="621251b8-2e33-4370-8ff4-5cdc785d7430"></column>
 			<column name="deviceGuid" value="dcd7f334-6625-4552-b32f-78afaf545949"></column>
-			<column name="user" value="3"></column>
+			<column name="user" value="315c0c1e-8c4c-458f-a37c-9b636d1fb80f"></column>
 			<column name="eventType" value="SITE_BLOCKED"></column>
 			<column name="eventSubtype" value="CNN_COM"></column>
 			<column name="title" value="Site/App block"></column>
@@ -193,7 +185,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="fb97d0fd-e043-4d78-9093-165e2e36d3f4"></column>
 			<column name="deviceGuid" value="dcd7f334-6625-4552-b32f-78afaf545949"></column>
-			<column name="user" value="3"></column>
+			<column name="user" value="315c0c1e-8c4c-458f-a37c-9b636d1fb80f"></column>
 			<column name="eventType" value="SITE_BLOCKED"></column>
 			<column name="eventSubtype" value="FACEBOOK_APP"></column>
 			<column name="title" value="Site/App block"></column>
@@ -206,7 +198,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="ba54a7e4-6211-4921-8c4d-7fb522f9046d"></column>
 			<column name="deviceGuid" value="dcd7f334-6625-4552-b32f-78afaf545949"></column>
-			<column name="user" value="3"></column>
+			<column name="user" value="315c0c1e-8c4c-458f-a37c-9b636d1fb80f"></column>
 			<column name="eventType" value="CAP_TRESHOLD_REACHED"></column>
 			<column name="title" value="Data cap threshold"></column>
 			<column name="content" value="8MB Remaining until 10/2/2014"></column>
@@ -218,7 +210,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="cbe01d4d-43fb-4bee-a43e-9421f5b34f41"></column>
 			<column name="deviceGuid" value="879c4f18-4c6e-462d-afa4-1866c0e38b18"></column>
-			<column name="user" value="3"></column>
+			<column name="user" value="315c0c1e-8c4c-458f-a37c-9b636d1fb80f"></column>
 			<column name="eventType" value="CAP_EXTENDED"></column>
 			<column name="title" value="Data cap threshold"></column>
 			<column name="content" value="100MB added.  108MB remaining until 10/2/2014"></column>
@@ -230,7 +222,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="aa926c4c-b120-4178-b105-7c25b94cc916"></column>
 			<column name="deviceGuid" value="879c4f18-4c6e-462d-afa4-1866c0e38b18"></column>
-			<column name="user" value="3"></column>
+			<column name="user" value="315c0c1e-8c4c-458f-a37c-9b636d1fb80f"></column>
 			<column name="eventType" value="SITE_BLOCKED"></column>
 			<column name="title" value="Security block"></column>
 			<column name="content" value="www.badsite.com"></column>
@@ -242,7 +234,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="0ec61cee-23c3-402d-aac3-d98cc18701f3"></column>
 			<column name="deviceGuid" value="879c4f18-4c6e-462d-afa4-1866c0e38b18"></column>
-			<column name="user" value="3"></column>
+			<column name="user" value="315c0c1e-8c4c-458f-a37c-9b636d1fb80f"></column>
 			<column name="eventType" value="SITE_BLOCKED"></column>
 			<column name="eventSubtype" value="CNN_COM"></column>
 			<column name="title" value="Site/App block"></column>
@@ -255,7 +247,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="b930290d-cc71-4c55-9856-df3dfa247a1d"></column>
 			<column name="deviceGuid" value="c6fdd4c4-e7a2-476a-b122-8c259eede5b2"></column>
-			<column name="user" value="4"></column>
+			<column name="user" value="79bcb260-7f75-49cf-b76d-41e1c2609055"></column>
 			<column name="eventType" value="SITE_BLOCKED"></column>
 			<column name="eventSubtype" value="CNN_COM"></column>
 			<column name="title" value="Site/App block"></column>
@@ -268,7 +260,7 @@
 		<insert tableName="notifications">
 			<column name="guid" value="9cc59038-0ea3-49bf-8f22-f26a9933feb0"></column>
 			<column name="deviceGuid" value="c6fdd4c4-e7a2-476a-b122-8c259eede5b2"></column>
-			<column name="user" value="4"></column>
+			<column name="user" value="79bcb260-7f75-49cf-b76d-41e1c2609055"></column>
 			<column name="eventType" value="GEO_AD"></column>
 			<column name="geofenceLat" value="51.5047"></column>
 			<column name="geofenceLon" value="-0.1753"></column>
