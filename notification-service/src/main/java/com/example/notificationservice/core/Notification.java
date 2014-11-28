@@ -24,8 +24,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 		@NamedQuery(name = "com.example.notificationservice.core.Notification.findOneIfUserMatches", query = "SELECT n FROM Notification n WHERE n.guid = :guid AND n.user = :user"),
 		@NamedQuery(name = "com.example.notificationservice.core.Notification.findSinceDateOrderByTypeAndDate", query = "SELECT n "
 				+ "FROM Notification n "
-				+ "WHERE n.user = :user AND n.eventTimestamp > :since "
-				+ "ORDER BY n.eventType, n.eventTimestamp DESC"),
+				+ "WHERE n.user = :user AND n.eventTimestamp >= :since "
+				+ "ORDER BY n.eventTimestamp DESC"),
 		@NamedQuery(name = "com.example.notificationservice.core.Notification.findAll", query = "SELECT n FROM Notification n ") })
 @JsonInclude(Include.NON_NULL)
 public class Notification {
@@ -37,7 +37,7 @@ public class Notification {
 	private String deviceGuid;
 
 	@JsonIgnore
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user", referencedColumnName = "guid")
 	private User user;
 

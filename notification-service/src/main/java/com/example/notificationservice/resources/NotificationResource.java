@@ -4,9 +4,7 @@ import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.PATCH;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,9 +39,9 @@ public class NotificationResource {
 	@Timed
 	@UnitOfWork
 	public Response read(@Auth User user, @PathParam("guid") String guid) {
-		Notification notification = fetchAndSetRead(guid, user, true);
-		return (notification == null) ? Response.status(Status.NOT_FOUND)
-				.build() : Response.ok(notification).build();
+		Optional<Notification> notification = fetchAndSetRead(guid, user, true);
+		return (notification.isPresent()) ? Response.ok(notification).build()
+				: Response.status(Status.NOT_FOUND).build();
 	}
 
 	@Path("/latest")
@@ -52,21 +50,12 @@ public class NotificationResource {
 	@UnitOfWork
 	public Map<String, List<Notification>> list(@Auth User user,
 			@QueryParam("since") Optional<Long> since) {
-		Map<String, List<Notification>> result = new HashMap<String, List<Notification>>();
-		List<Notification> searchResult = dao.findSinceDateOrderByTypeAndDate(
-				user, new Date(since.or(System.currentTimeMillis() - 3600 * 24)));
-		if (searchResult != null) {
-			for (Notification notification : searchResult) {
-				List<Notification> list = result.get(notification
-						.getEventType());
-				if (list == null) {
-					list = new ArrayList<Notification>();
-				}
-				list.add(notification);
-				result.put(notification.getEventType(), list);
-			}
-		}
-		return result;
+		Map<String, List<Notification>> searchResult = dao
+				.findSinceDateOrderByDateGroupByType(
+						user,
+						new Date(
+								since.or(System.currentTimeMillis() - 3600000 * 24)));
+		return searchResult;
 	}
 
 	@Path("/{guid}/read")
@@ -74,9 +63,9 @@ public class NotificationResource {
 	@Timed
 	@UnitOfWork
 	public Response markRead(@Auth User user, @PathParam("guid") String guid) {
-		Notification notification = fetchAndSetRead(guid, user, true);
-		return (notification == null) ? Response.status(Status.NOT_MODIFIED)
-				.build() : Response.ok().build();
+		Optional<Notification> notification = fetchAndSetRead(guid, user, true);
+		return (notification.isPresent()) ? Response.ok().build() : Response
+				.status(Status.NOT_FOUND).build();
 	}
 
 	@Path("/{guid}/unread")
@@ -84,9 +73,9 @@ public class NotificationResource {
 	@Timed
 	@UnitOfWork
 	public Response markUnread(@Auth User user, @PathParam("guid") String guid) {
-		Notification notification = fetchAndSetRead(guid, user, false);
-		return (notification == null) ? Response.status(Status.NOT_MODIFIED)
-				.build() : Response.ok().build();
+		Optional<Notification> notification = fetchAndSetRead(guid, user, false);
+		return (notification.isPresent()) ? Response.ok().build() : Response
+				.status(Status.NOT_FOUND).build();
 	}
 
 	@Path("/{guid}")
@@ -94,19 +83,26 @@ public class NotificationResource {
 	@Timed
 	@UnitOfWork
 	public Response delete(@Auth User user, @PathParam("guid") String guid) {
-		Notification notification = dao.findOneIfUserMatches(guid, user);
-		return (notification == null) ? Response.status(Status.NOT_FOUND)
-				.build() : Response.status(204).build();
+		Optional<Notification> notification = dao.findOneIfUserMatches(guid,
+				user);
+		if (notification.isPresent()) {
+			dao.delete(notification.get());
+			return Response.status(204).build();
+		} else {
+			return Response.status(Status.NOT_FOUND).build();
+		}
 	}
 
-	private Notification fetchAndSetRead(String guid, User user, boolean read) {
-		Notification notification = dao.findOneIfUserMatches(guid, user);
-		// If the notification does not exist or does not belong to the user
+	private Optional<Notification> fetchAndSetRead(String guid, User user,
+			boolean read) {
+		Optional<Notification> notification = dao.findOneIfUserMatches(guid,
+				user);
+		// If the notification does not exist or does not belong to the user,
 		// raise a 404. We don't tell malicious users the object actually
 		// exists
-		if (notification != null) {
-			notification.setRead(read);
-			dao.update(notification);
+		if (notification.isPresent()) {
+			notification.get().setRead(read);
+			dao.update(notification.get());
 		}
 		return notification;
 	}
